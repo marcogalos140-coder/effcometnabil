@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>index.html — FALLACIES: Why good arguments go wrong</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #030303;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Ambient Glow & Slow Animated 3D Floor Grid */
+        .grid-bg {
+            position: absolute;
+            width: 250%;
+            height: 250%;
+            top: -75%;
+            left: -75%;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 70px 70px;
+            transform: perspective(700px) rotateX(65deg);
+            animation: gridMove 65s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(700px) rotateX(65deg) translateY(0); }
+            100% { transform: perspective(700px) rotateX(65deg) translateY(70px); }
+        }
+
+        .glow-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.12) 0%, rgba(3, 3, 3, 0.96) 80%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Slow Floating Wireframe Geometries */
+        .wire-geo {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .wire-box-1 {
+            width: 90px;
+            height: 90px;
+            top: 15%;
+            left: 8%;
+            animation: geoRotate1 62s linear infinite;
+        }
+
+        .wire-box-2 {
+            width: 130px;
+            height: 130px;
+            bottom: 12%;
+            right: 8%;
+            border-radius: 50%;
+            border-style: dashed;
+            animation: geoRotate2 76s linear infinite;
+        }
+
+        @keyframes geoRotate1 {
+            0% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(180deg) translateY(-20px); }
+            100% { transform: rotate(360deg) translateY(0px); }
+        }
+
+        @keyframes geoRotate2 {
+            0% { transform: rotate(360deg) scale(1); }
+            50% { transform: rotate(0deg) scale(1.1); }
+            100% { transform: rotate(-360deg) scale(1); }
+        }
+
+        /* Slow Floating particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+            animation: floatParticle 32s ease-in-out infinite;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.25; }
+            50% { transform: translateY(-50px) translateX(25px) scale(1.3); opacity: 0.85; }
+        }
+
+        /* Slide Stage Container with 3D Perspective */
+        .presentation-stage {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1400px;
+            transform-style: preserve-3d;
+        }
+
+        /* Cinematic 3D Blur-to-Focus Directional Slide Transitions */
+        .slide {
+            position: absolute;
+            width: 92%;
+            max-width: 1200px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            filter: blur(10px);
+            transform: translate3d(0, 36px, -90px) scale(0.93);
+            transition:
+                opacity 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                transform 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                filter 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                visibility 0s linear 2.1s;
+            overflow-y: auto;
+            scrollbar-width: none;
+            will-change: transform, opacity, filter;
+        }
+
+        .slide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Outgoing past slide drifts softly backward and left */
+        .slide.exit-prev {
+            opacity: 0;
+            visibility: hidden;
+            filter: blur(12px);
+            transform: translate3d(-70px, -24px, -130px) scale(0.91) rotateY(4deg);
+            transition:
+                opacity 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                transform 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                filter 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                visibility 0s linear 2.1s;
+        }
+
+        /* Outgoing future slide drifts softly backward and right */
+        .slide.exit-next {
+            opacity: 0;
+            visibility: hidden;
+            filter: blur(12px);
+            transform: translate3d(70px, 24px, -130px) scale(0.91) rotateY(-4deg);
+            transition:
+                opacity 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                transform 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                filter 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                visibility 0s linear 2.1s;
+        }
+
+        /* Incoming pre-position offsets */
+        .slide.enter-from-right {
+            transform: translate3d(70px, 24px, -90px) scale(0.94) rotateY(-3deg);
+            filter: blur(10px);
+            opacity: 0;
+        }
+
+        .slide.enter-from-left {
+            transform: translate3d(-70px, -24px, -90px) scale(0.94) rotateY(3deg);
+            filter: blur(10px);
+            opacity: 0;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            filter: blur(0px);
+            transform: translate3d(0, 0, 0) scale(1) rotateY(0deg);
+            transition:
+                opacity 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                transform 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                filter 2.1s cubic-bezier(0.19, 1, 0.22, 1),
+                visibility 0s linear 0s;
+        }
+
+        /* Continuous Dynamic Idle Animations (Ultra-slow, meditative movement) */
+        .idle-float {
+            animation: idleFloat 15s ease-in-out infinite;
+        }
+
+        .idle-pulse {
+            animation: idlePulse 14s ease-in-out infinite;
+        }
+
+        .idle-glow-text {
+            animation: idleGlowText 14s ease-in-out infinite;
+        }
+
+        @keyframes idleFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-14px) rotate(0.4deg); }
+        }
+
+        @keyframes idlePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.28); }
+            50% { box-shadow: 0 0 38px rgba(255, 255, 255, 0.42); border-color: rgba(255, 255, 255, 0.85); }
+        }
+
+        @keyframes idleGlowText {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.45), 0 0 40px rgba(255, 255, 255, 0.18); }
+            50% { text-shadow: 0 0 35px rgba(255, 255, 255, 0.88), 0 0 70px rgba(255, 255, 255, 0.45); }
+        }
+
+        .text-glow {
+            text-shadow: 0 0 25px rgba(255, 255, 255, 0.7), 0 0 50px rgba(255, 255, 255, 0.3);
+        }
+
+        .border-glow {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        /* Cartoon Stick Figure Graphics */
+        .stick-figure {
+            position: relative;
+            width: 80px;
+            height: 120px;
+        }
+
+        .stick-head {
+            width: 42px;
+            height: 42px;
+            border: 3px solid white;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+            background: #030303;
+            box-shadow: 0 0 12px rgba(255,255,255,0.6);
+            transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .stick-eyes {
+            position: absolute;
+            top: 13px;
+            left: 9px;
+            width: 20px;
+            display: flex;
+            justify-content: space-between;
+            transition: transform 1.2s ease-in-out;
+        }
+
+        .stick-eye {
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.8s ease;
+        }
+
+        .stick-mouth {
+            position: absolute;
+            bottom: 8px;
+            left: 13px;
+            width: 14px;
+            height: 6px;
+            border-bottom: 2px solid white;
+            border-radius: 0 0 6px 6px;
+            transition: all 1.1s ease-in-out;
+        }
+
+        .stick-body {
+            width: 3px;
+            height: 45px;
+            background: white;
+            margin: 0 auto;
+            box-shadow: 0 0 8px rgba(255,255,255,0.6);
+        }
+
+        .stick-arms {
+            position: absolute;
+            top: 48px;
+            left: 15px;
+            width: 50px;
+            height: 3px;
+            background: white;
+            transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .stick-legs {
+            position: relative;
+            width: 40px;
+            height: 35px;
+            margin: -2px auto 0;
+        }
+
+        .stick-leg-left, .stick-leg-right {
+            position: absolute;
+            width: 3px;
+            height: 35px;
+            background: white;
+            top: 0;
+        }
+
+        .stick-leg-left { left: 10px; transform: rotate(20deg); transform-origin: top; }
+        .stick-leg-right { right: 10px; transform: rotate(-20deg); transform-origin: top; }
+
+        /* Speech Bubbles */
+        .speech-bubble {
+            position: relative;
+            background: rgba(18, 18, 18, 0.95);
+            border: 2px solid #ffffff;
+            border-radius: 18px;
+            padding: 12px 18px;
+            color: #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.32);
+            max-width: 380px;
+            font-size: 0.98rem;
+            line-height: 1.45;
+            font-weight: 600;
+            transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1), transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 28px;
+            border-width: 11px 11px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+        }
+
+        .speech-bubble.right-tail::after {
+            left: auto;
+            right: 28px;
+        }
+
+        /* Staggered Entry Animation Utility Classes (Slow, gentle entry) */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(28px);
+            filter: blur(4px);
+            transition:
+                opacity 2.1s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 2.1s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 2.1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide.active .reveal-item {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0px);
+        }
+
+        /* Navigation Buttons */
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: #ffffff;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="relative w-screen h-screen overflow-hidden bg-[#030303] text-white">
+
+    <!-- Subtle Top Progress Bar -->
+    <div class="fixed top-0 left-0 right-0 h-[3px] bg-white/10 z-30">
+        <div id="top-progress-bar" class="h-full bg-white shadow-[0_0_12px_rgba(255,255,255,0.9)] transition-all duration-[1800ms] ease-out" style="width: 5%;"></div>
+    </div>
+
+    <!-- Background Grid, Glow, Wireframes & Floating Particles -->
+    <div class="grid-bg"></div>
+    <div class="glow-overlay"></div>
+    <div class="wire-geo wire-box-1"></div>
+    <div class="wire-geo wire-box-2"></div>
+    <div id="particles-container" class="fixed inset-0 pointer-events-none z-[3]"></div>
+
+    <!-- Top Minimalist Header -->
+    <header class="fixed top-2 left-0 right-0 z-20 px-6 py-3 flex items-center justify-between pointer-events-none">
+        <div class="flex items-center gap-3 pointer-events-auto">
+            <span class="px-3 py-1 rounded-full text-xs font-mono uppercase tracking-widest border border-white/25 bg-white/5 text-white/80">
+                Group 6
+            </span>
+            <span class="hidden sm:inline text-xs font-mono uppercase tracking-widest text-white/40">
+                Logical Fallacies Presentation
+            </span>
+        </div>
+        <div id="slide-counter" class="px-4 py-1.5 rounded-full text-xs sm:text-sm font-mono tracking-widest border border-white/25 bg-white/5 text-white/90 pointer-events-auto">
+            01 / 20
+        </div>
+    </header>
+
+    <!-- Slide Stage Container -->
+    <main id="presentation-stage" class="presentation-stage">
+
+        <!-- SLIDE 1: Title -->
+        <div class="slide active" data-slide="1">
+            <div class="idle-float text-center px-4">
+                <div class="inline-block px-6 py-2 mb-6 rounded-full border border-white/40 bg-white/10 text-xs tracking-widest uppercase text-white/80 reveal-item idle-pulse" style="transition-delay: 0.3s;">
+                   Group 6 
+                </div>
+                <h1 class="text-6xl sm:text-7xl md:text-9xl font-black tracking-wider uppercase mb-4 text-glow idle-glow-text reveal-item" style="transition-delay: 0.6s;">
+                    FALLACIES
+                </h1>
+                <p class="text-xl sm:text-2xl md:text-4xl font-light tracking-wide text-white/80 reveal-item" style="transition-delay: 1.0s;">
+                    Why good arguments go wrong
+                </p>
+                <div class="mt-10 sm:mt-12 flex justify-center reveal-item" style="transition-delay: 1.4s;">
+                    <div class="stick-figure idle-pulse p-2 border-b-2 border-white/40 rounded-full">
+                        <div class="stick-head">
+                            <div class="stick-eyes"><div class="stick-eye"></div><div class="stick-eye"></div></div>
+                            <div class="stick-mouth"></div>
+                        </div>
+                        <div class="stick-body"></div>
+                        <div class="stick-arms"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Sound Convincing -->
+        <div class="slide" data-slide="2">
+            <div class="idle-float text-center max-w-4xl px-4">
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tight text-glow idle-glow-text reveal-item" style="transition-delay: 0.4s;">
+                    It sounds convincing.
+                </h2>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Until Gaps -->
+        <div class="slide" data-slide="3">
+            <div class="idle-float text-center max-w-4xl px-4">
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tight text-white/50 reveal-item" style="transition-delay: 0.3s;">
+                    Until you find
+                </h2>
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-black tracking-tight text-glow idle-glow-text reveal-item mt-4" style="transition-delay: 0.9s;">
+                    the gaps.
+                </h2>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: A Logical Fallacy -->
+        <div class="slide" data-slide="4">
+            <div class="idle-float text-center px-4">
+                <div class="border-glow px-8 sm:px-12 py-8 sm:py-10 rounded-3xl bg-black/70 backdrop-blur-md idle-pulse reveal-item" style="transition-delay: 0.4s;">
+                    <h2 class="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-wider text-glow">
+                        A logical fallacy.
+                    </h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Intentional vs Mistake -->
+        <div class="slide" data-slide="5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 w-full max-w-5xl px-4">
+                <div class="border-glow p-8 sm:p-10 rounded-3xl bg-white/5 backdrop-blur-md text-center idle-pulse idle-float reveal-item" style="transition-delay: 0.4s;">
+                    <i class="fa-solid fa-bullseye text-4xl sm:text-5xl mb-6 text-white/80"></i>
+                    <h3 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider text-glow">On purpose.</h3>
+                </div>
+                <div class="border-glow p-8 sm:p-10 rounded-3xl bg-white/5 backdrop-blur-md text-center idle-pulse idle-float reveal-item" style="transition-delay: 1.0s; animation-delay: 0.8s;">
+                    <i class="fa-solid fa-triangle-exclamation text-4xl sm:text-5xl mb-6 text-white/80"></i>
+                    <h3 class="text-3xl sm:text-4xl font-bold uppercase tracking-wider text-glow">By mistake.</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Three Fallacies Agenda -->
+        <div class="slide" data-slide="6">
+            <div class="w-full max-w-5xl px-4">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-wider mb-8 sm:mb-10 text-center text-glow reveal-item" style="transition-delay: 0.3s;">
+                    Three fallacies.
+                </h2>
+                <div class="space-y-4 sm:space-y-6">
+                    <div class="border-glow p-6 sm:p-8 rounded-2xl bg-white/5 flex items-center justify-between idle-float reveal-item" style="transition-delay: 0.6s;">
+                        <span class="text-3xl sm:text-4xl font-black text-white/30">01</span>
+                        <span class="text-2xl sm:text-3xl font-bold tracking-wide">Non sequitur</span>
+                    </div>
+                    <div class="border-glow p-6 sm:p-8 rounded-2xl bg-white/5 flex items-center justify-between idle-float reveal-item" style="transition-delay: 1.0s; animation-delay: 0.5s;">
+                        <span class="text-3xl sm:text-4xl font-black text-white/30">02</span>
+                        <span class="text-2xl sm:text-3xl font-bold tracking-wide">False dilemma</span>
+                    </div>
+                    <div class="border-glow p-6 sm:p-8 rounded-2xl bg-white/5 flex items-center justify-between idle-float reveal-item" style="transition-delay: 1.4s; animation-delay: 1.0s;">
+                        <span class="text-3xl sm:text-4xl font-black text-white/30">03</span>
+                        <span class="text-2xl sm:text-3xl font-bold tracking-wide">Socratic overload</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Non Sequitur Header -->
+        <div class="slide" data-slide="7">
+            <div class="idle-float text-center px-4">
+                <div class="text-lg sm:text-xl font-mono text-white/50 mb-3 reveal-item" style="transition-delay: 0.3s;">01 / FALLACY</div>
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-widest text-glow idle-glow-text reveal-item" style="transition-delay: 0.6s;">
+                    NON SEQUITUR
+                </h2>
+                <div class="mt-8 inline-block px-8 py-3 rounded-full border border-white/40 bg-white/10 text-xl sm:text-2xl font-medium idle-pulse reveal-item" style="transition-delay: 1.0s;">
+                    It does not follow.
+                </div>
+                <p class="mt-6 text-white/60 text-lg sm:text-xl reveal-item" style="transition-delay: 1.4s;">
+                    a.k.a. irrelevant reason · derailment
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Non Sequitur Extended Animated Conversation Example (5 Turns) -->
+        <div class="slide" data-slide="8">
+            <div class="w-full max-w-5xl flex flex-col items-center px-4">
+                <div class="text-xs sm:text-sm tracking-widest uppercase text-white/40 mb-5 text-center reveal-item" style="transition-delay: 0.2s;">
+                    NON SEQUITUR EXAMPLE
+                </div>
+                
+                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-end mb-6">
+                    <!-- Character A -->
+                    <div class="flex flex-col items-center idle-float">
+                        <div class="flex flex-col items-center space-y-2.5 mb-4 w-full">
+                            <div id="ns-bubble-1" class="speech-bubble opacity-0 transform translate-y-4">
+                                "Did you see that sleek red car zoom past the highway?"
+                            </div>
+                            <div id="ns-bubble-3" class="speech-bubble opacity-0 transform translate-y-4">
+                                "True, Lamborghinis are super fast. And that car is definitely fast..."
+                            </div>
+                            <div id="ns-bubble-5" class="speech-bubble opacity-0 transform translate-y-4 border-2 border-white bg-white/20 shadow-[0_0_30px_rgba(255,255,255,0.6)]">
+                                "...So that car MUST be a Lamborghini!"
+                            </div>
+                        </div>
+                        <div class="stick-figure">
+                            <div id="ns-head-a" class="stick-head">
+                                <div id="ns-eyes-a" class="stick-eyes"><div class="stick-eye"></div><div class="stick-eye"></div></div>
+                                <div id="ns-mouth-a" class="stick-mouth"></div>
+                            </div>
+                            <div class="stick-body"></div>
+                            <div id="ns-arms-a" class="stick-arms"></div>
+                        </div>
+                        <span class="mt-2 text-xs sm:text-sm font-mono text-white/50">PERSON A</span>
+                    </div>
+
+                    <!-- Character B -->
+                    <div class="flex flex-col items-center idle-float" style="animation-delay: 0.7s;">
+                        <div class="flex flex-col items-center space-y-2.5 mb-4 w-full">
+                            <div id="ns-bubble-2" class="speech-bubble right-tail opacity-0 transform translate-y-4">
+                                "Yeah, it must be going at least 180 mph! Lamborghinis are famously fast."
+                            </div>
+                            <div id="ns-bubble-4" class="speech-bubble right-tail opacity-0 transform translate-y-4">
+                                "Wait—what are you getting at?"
+                            </div>
+                        </div>
+                        <div class="stick-figure">
+                            <div id="ns-head-b" class="stick-head">
+                                <div id="ns-eyes-b" class="stick-eyes"><div class="stick-eye"></div><div class="stick-eye"></div></div>
+                                <div id="ns-mouth-b" class="stick-mouth" style="border-radius: 6px 6px 0 0; border-bottom: none; border-top: 2px solid white;"></div>
+                            </div>
+                            <div class="stick-body"></div>
+                            <div id="ns-arms-b" class="stick-arms"></div>
+                        </div>
+                        <span class="mt-2 text-xs sm:text-sm font-mono text-white/50">PERSON B</span>
+                    </div>
+                </div>
+
+                <button onclick="playNonSequiturAnim()" class="nav-btn px-7 py-2.5 rounded-full text-sm font-semibold flex items-center gap-3 cursor-pointer">
+                    <i class="fa-solid fa-play"></i> Replay Conversation Animation
+                </button>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Non Sequitur Breakdown - Premise 1 -->
+        <div class="slide" data-slide="9">
+            <div class="idle-float text-center max-w-4xl px-4">
+                <span class="text-sm sm:text-base font-mono text-white/50 uppercase tracking-widest reveal-item" style="transition-delay: 0.3s;">Step 1: Premise</span>
+                <div class="border-glow p-8 sm:p-10 rounded-3xl bg-white/5 mt-6 idle-pulse reveal-item" style="transition-delay: 0.8s;">
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold text-glow">Lamborghinis are fast.</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: Non Sequitur Breakdown - Premise 2 -->
+        <div class="slide" data-slide="10">
+            <div class="idle-float text-center max-w-4xl px-4">
+                <span class="text-sm sm:text-base font-mono text-white/50 uppercase tracking-widest reveal-item" style="transition-delay: 0.3s;">Step 2: Observation</span>
+                <div class="border-glow p-8 sm:p-10 rounded-3xl bg-white/5 mt-6 idle-pulse reveal-item" style="transition-delay: 0.8s;">
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold text-glow">Lamborghinis are fast.</h3>
+                    <div class="my-6 text-3xl text-white/40">+</div>
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-bold text-glow">That car is fast.</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Non Sequitur Breakdown - False Conclusion -->
+        <div class="slide" data-slide="11">
+            <div class="idle-float text-center max-w-4xl px-4">
+                <span class="text-sm sm:text-base font-mono text-white/50 uppercase tracking-widest reveal-item" style="transition-delay: 0.3s;">Step 3: Flawed Conclusion</span>
+                <div class="border-glow p-8 sm:p-10 rounded-3xl bg-white/10 mt-6 border-2 border-white idle-pulse reveal-item" style="transition-delay: 0.8s;">
+                    <h3 class="text-2xl sm:text-3xl font-medium text-white/60">Lamborghinis are fast.</h3>
+                    <h3 class="text-2xl sm:text-3xl font-medium text-white/60 mt-3">That car is fast.</h3>
+                    <div class="my-6 text-xl sm:text-2xl font-bold text-white/80">THEREFORE:</div>
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-black text-glow uppercase">So it's a Lamborghini.</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: Non Sequitur Conclusion Statement -->
+        <div class="slide" data-slide="12">
+            <div class="idle-float text-center max-w-5xl px-4">
+                <h2 class="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-glow idle-glow-text reveal-item" style="transition-delay: 0.4s;">
+                    NON SEQUITUR
+                </h2>
+                <p class="text-xl sm:text-2xl md:text-3xl text-white/80 mt-8 leading-relaxed reveal-item" style="transition-delay: 1.0s;">
+                    Just because the conclusion sounds reasonable doesn't mean the argument actually leads to it.
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: False Dilemma Header -->
+        <div class="slide" data-slide="13">
+            <div class="idle-float text-center px-4">
+                <div class="text-lg sm:text-xl font-mono text-white/50 mb-3 reveal-item" style="transition-delay: 0.3s;">02 / FALLACY</div>
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-widest text-glow idle-glow-text reveal-item" style="transition-delay: 0.6s;">
+                    FALSE DILEMMA
+                </h2>
+                <div class="mt-8 inline-block px-8 py-3 rounded-full border border-white/40 bg-white/10 text-xl sm:text-2xl font-medium idle-pulse reveal-item" style="transition-delay: 1.0s;">
+                    Either…or.
+                </div>
+                <p class="mt-6 text-white/60 text-lg sm:text-xl reveal-item" style="transition-delay: 1.4s;">
+                    a.k.a. the either-or fallacy
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: False Dilemma Extended Animated Conversation Example (5 Turns) -->
+        <div class="slide" data-slide="14">
+            <div class="w-full max-w-5xl flex flex-col items-center px-4">
+                <div class="text-xs sm:text-sm tracking-widest uppercase text-white/40 mb-5 text-center reveal-item" style="transition-delay: 0.2s;">
+                    FALSE DILEMMA EXAMPLE
+                </div>
+                
+                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 items-end mb-6">
+                    <!-- Character A (Seller) -->
+                    <div class="flex flex-col items-center idle-float">
+                        <div class="flex flex-col items-center space-y-2.5 mb-4 w-full">
+                            <div id="fd-bubble-1" class="speech-bubble opacity-0 transform translate-y-4">
+                                "You're looking at our new Eco-Bottle 3000. Are you ready to buy it today?"
+                            </div>
+                            <div id="fd-bubble-3" class="speech-bubble opacity-0 transform translate-y-4">
+                                "Look, it's simple: either you buy this Eco-Bottle right now..."
+                            </div>
+                            <div id="fd-bubble-5" class="speech-bubble opacity-0 transform translate-y-4 border-2 border-white bg-white/20 shadow-[0_0_30px_rgba(255,255,255,0.6)]">
+                                "...or you hate the environment and want the entire planet to end!"
+                            </div>
+                        </div>
+                        <div class="stick-figure">
+                            <div id="fd-head-a" class="stick-head">
+                                <div id="fd-eyes-a" class="stick-eyes"><div class="stick-eye"></div><div class="stick-eye"></div></div>
+                                <div id="fd-mouth-a" class="stick-mouth"></div>
+                            </div>
+                            <div class="stick-body"></div>
+                            <div id="fd-arms-a" class="stick-arms"></div>
+                        </div>
+                        <span class="mt-2 text-xs sm:text-sm font-mono text-white/50">SELLER</span>
+                    </div>
+
+                    <!-- Character B (Buyer / Friend) -->
+                    <div class="flex flex-col items-center idle-float" style="animation-delay: 0.7s;">
+                        <div class="flex flex-col items-center space-y-2.5 mb-4 w-full">
+                            <div id="fd-bubble-2" class="speech-bubble right-tail opacity-0 transform translate-y-4">
+                                "Honestly, it's a bit pricey. I already have a reusable steel bottle at home."
+                            </div>
+                            <div id="fd-bubble-4" class="speech-bubble right-tail opacity-0 transform translate-y-4">
+                                "Or what? I just keep using the bottle I already own?"
+                            </div>
+                        </div>
+                        <div class="stick-figure">
+                            <div id="fd-head-b" class="stick-head">
+                                <div id="fd-eyes-b" class="stick-eyes"><div class="stick-eye"></div><div class="stick-eye"></div></div>
+                                <div id="fd-mouth-b" class="stick-mouth"></div>
+                            </div>
+                            <div class="stick-body"></div>
+                            <div id="fd-arms-b" class="stick-arms"></div>
+                        </div>
+                        <span class="mt-2 text-xs sm:text-sm font-mono text-white/50">BUYER / FRIEND</span>
+                    </div>
+                </div>
+
+                <button onclick="playFalseDilemmaAnim()" class="nav-btn px-7 py-2.5 rounded-full text-sm font-semibold flex items-center gap-3 cursor-pointer">
+                    <i class="fa-solid fa-play"></i> Replay Choice Animation
+                </button>
+            </div>
+        </div>
+
+        <!-- SLIDE 15: False Dilemma Options Breakdown -->
+        <div class="slide" data-slide="15">
+            <div class="w-full max-w-5xl text-center px-4">
+                <h3 class="text-2xl sm:text-3xl font-bold uppercase tracking-wider mb-8 sm:mb-10 text-white/60 reveal-item" style="transition-delay: 0.3s;">
+                    What the argument hides:
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+                    <div class="border-glow p-6 sm:p-8 rounded-3xl bg-white/5 idle-pulse idle-float reveal-item" style="transition-delay: 0.6s;">
+                        <h4 class="text-2xl sm:text-3xl font-bold text-glow">Or neither.</h4>
+                    </div>
+                    <div class="border-glow p-6 sm:p-8 rounded-3xl bg-white/5 idle-pulse idle-float reveal-item" style="transition-delay: 1.0s; animation-delay: 0.5s;">
+                        <h4 class="text-2xl sm:text-3xl font-bold text-glow">Or both.</h4>
+                    </div>
+                    <div class="border-glow p-6 sm:p-8 rounded-3xl bg-white/5 idle-pulse idle-float reveal-item" style="transition-delay: 1.4s; animation-delay: 1.0s;">
+                        <h4 class="text-2xl sm:text-3xl font-bold text-glow">Or more.</h4>
+                    </div>
+                </div>
+                <div class="mt-10 sm:mt-12 inline-block px-8 sm:px-10 py-4 rounded-full bg-white/10 border border-white/30 text-xl sm:text-2xl font-semibold idle-pulse reveal-item" style="transition-delay: 1.7s;">
+                    Black-and-white thinking.
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 16: False Dilemma Summary -->
+        <div class="slide" data-slide="16">
+            <div class="idle-float text-center max-w-5xl px-4">
+                <h2 class="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-glow idle-glow-text reveal-item" style="transition-delay: 0.4s;">
+                    FALSE DILEMMA
+                </h2>
+                <p class="text-xl sm:text-2xl md:text-3xl text-white/80 mt-8 leading-relaxed reveal-item" style="transition-delay: 1.0s;">
+                    Forcing a choice between two extremes when many other options exist.
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 17: Socratic Overload Header -->
+        <div class="slide" data-slide="17">
+            <div class="idle-float text-center px-4">
+                <div class="text-lg sm:text-xl font-mono text-white/50 mb-3 reveal-item" style="transition-delay: 0.3s;">03 / FALLACY</div>
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-widest text-glow idle-glow-text reveal-item" style="transition-delay: 0.6s;">
+                    SOCRATIC OVERLOAD
+                </h2>
+                <div class="mt-8 inline-block px-8 py-3 rounded-full border border-white/40 bg-white/10 text-xl sm:text-2xl font-medium idle-pulse reveal-item" style="transition-delay: 1.0s;">
+                    The Socratic method.
+                </div>
+                <p class="mt-6 text-white/60 text-lg sm:text-xl reveal-item" style="transition-delay: 1.4s;">
+                    Questions that test what you really know.
+                </p>
+            </div>
+        </div>
+
+        <!-- SLIDE 18: Socratic Overload Extended Question Barrage (14 Questions) -->
+        <div class="slide" data-slide="18">
+            <div class="w-full max-w-6xl flex flex-col items-center px-4">
+                <div class="text-xs sm:text-sm tracking-widest uppercase text-white/40 mb-3 text-center reveal-item" style="transition-delay: 0.2s;">
+                    SOCRATIC OVERLOAD ANIMATION
+                </div>
+
+                <div class="relative w-full h-[410px] sm:h-[440px] flex items-center justify-center mb-5">
+                    <!-- Overwhelming 14-Question Cloud -->
+                    <div id="so-q1" class="absolute top-1 left-2 sm:left-4 speech-bubble text-xs p-2.5 opacity-0 idle-float">"What is your evidence?"</div>
+                    <div id="so-q2" class="absolute top-2 right-2 sm:right-6 speech-bubble right-tail text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 0.3s;">"Have you tested every variable?"</div>
+                    <div id="so-q3" class="absolute top-16 left-1 sm:left-2 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 0.6s;">"Who defined your terms?"</div>
+                    <div id="so-q4" class="absolute top-20 right-1 sm:right-2 speech-bubble right-tail text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 0.9s;">"What about counter-examples?"</div>
+                    <div id="so-q5" class="absolute bottom-24 left-2 sm:left-4 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 1.2s;">"Can you prove your premise?"</div>
+                    <div id="so-q6" class="absolute bottom-28 right-2 sm:right-4 speech-bubble right-tail text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 1.5s;">"Why assume logic holds?"</div>
+                    <div id="so-q7" class="hidden sm:block absolute top-36 left-12 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 1.8s;">"How do you address paradoxes?"</div>
+                    <div id="so-q8" class="absolute bottom-3 left-3 sm:left-1/4 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 2.1s;">"Is that universally true?"</div>
+                    <div id="so-q9" class="hidden sm:block absolute top-8 left-1/3 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 2.4s;">"What is the underlying cause?"</div>
+                    <div id="so-q10" class="absolute bottom-5 right-3 sm:right-1/4 speech-bubble right-tail text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 2.7s;">"Are you certain of anything?"</div>
+                    <div id="so-q11" class="hidden md:block absolute top-36 right-12 speech-bubble right-tail text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 3.0s;">"What if your senses deceive you?"</div>
+                    <div id="so-q12" class="hidden md:block absolute top-24 left-1/3 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 3.3s;">"Did you cite every source ever written?"</div>
+                    <div id="so-q13" class="hidden lg:block absolute bottom-16 left-1/4 speech-bubble text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 3.6s;">"How can you be 100% objective?"</div>
+                    <div id="so-q14" class="hidden lg:block absolute bottom-16 right-1/4 speech-bubble right-tail text-xs p-2.5 opacity-0 idle-float" style="animation-delay: 3.9s;">"Why haven't you answered my first question yet?"</div>
+
+                    <!-- Overwhelmed Target Character -->
+                    <div class="stick-figure idle-float z-10">
+                        <div class="stick-head" id="so-head">
+                            <div class="stick-eyes" id="so-eyes">
+                                <div class="stick-eye" id="so-eye-l"></div>
+                                <div class="stick-eye" id="so-eye-r"></div>
+                            </div>
+                            <div class="stick-mouth" id="so-mouth"></div>
+                        </div>
+                        <div class="stick-body"></div>
+                        <div class="stick-arms" id="so-arms"></div>
+                    </div>
+                </div>
+
+                <button onclick="playSocraticOverloadAnim()" class="nav-btn px-7 py-2.5 rounded-full text-sm font-semibold flex items-center gap-3 cursor-pointer">
+                    <i class="fa-solid fa-play"></i> Trigger Question Barrage
+                </button>
+            </div>
+        </div>
+
+        <!-- SLIDE 19: Socratic Overload Definition Breakdown -->
+        <div class="slide" data-slide="19">
+            <div class="idle-float text-center max-w-5xl px-4">
+                <div class="text-sm sm:text-base font-mono text-white/50 uppercase tracking-widest mb-4 reveal-item" style="transition-delay: 0.3s;">
+                    03 / TAKEAWAY
+                </div>
+                <h2 class="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-glow idle-glow-text reveal-item" style="transition-delay: 0.6s;">
+                    SOCRATIC OVERLOAD
+                </h2>
+                <p class="text-xl sm:text-2xl md:text-3xl text-white/80 mt-8 leading-relaxed reveal-item" style="transition-delay: 1.0s;">
+                    Flooding an argument with rapid-fire questions until clarity is lost and the point gets buried.
+                </p>
+                <div class="mt-10 inline-flex flex-wrap justify-center gap-4 reveal-item" style="transition-delay: 1.4s;">
+                    <span class="px-6 py-2.5 rounded-full border border-white/30 bg-white/5 text-sm sm:text-base font-medium idle-pulse">
+                        Spot the gap
+                    </span>
+                    <span class="px-6 py-2.5 rounded-full border border-white/30 bg-white/5 text-sm sm:text-base font-medium idle-pulse" style="animation-delay: 0.6s;">
+                        Test the claim
+                    </span>
+                    <span class="px-6 py-2.5 rounded-full border border-white/30 bg-white/5 text-sm sm:text-base font-medium idle-pulse" style="animation-delay: 1.2s;">
+                        Stay on point
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 20: Summary & Concluding Takeaway -->
+        <div class="slide" data-slide="20">
+            <div class="w-full max-w-5xl text-center px-4">
+                <div class="inline-block px-5 py-1.5 mb-4 rounded-full border border-white/30 bg-white/5 text-xs font-mono uppercase tracking-widest text-white/70 reveal-item" style="transition-delay: 0.2s;">
+                    Summary · Group 6
+                </div>
+                <h2 class="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tight text-glow idle-glow-text reveal-item" style="transition-delay: 0.5s;">
+                    THINK CLEARLY.
+                </h2>
+                <p class="text-lg sm:text-xl md:text-2xl text-white/75 mt-4 max-w-3xl mx-auto reveal-item" style="transition-delay: 0.8s;">
+                    Spot the flaw before the argument fools you.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 mt-10 text-left">
+                    <div class="border-glow p-6 rounded-2xl bg-white/5 backdrop-blur-md idle-float reveal-item" style="transition-delay: 1.1s;">
+                        <div class="text-xs font-mono text-white/45 mb-2">01 · NON SEQUITUR</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Check the leap</h3>
+                        <p class="text-sm text-white/70 leading-relaxed">Make sure the conclusion actually follows from the evidence given.</p>
+                    </div>
+                    <div class="border-glow p-6 rounded-2xl bg-white/5 backdrop-blur-md idle-float reveal-item" style="transition-delay: 1.4s; animation-delay: 0.6s;">
+                        <div class="text-xs font-mono text-white/45 mb-2">02 · FALSE DILEMMA</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Look for the middle</h3>
+                        <p class="text-sm text-white/70 leading-relaxed">Reject forced extremes—there are almost always more than two choices.</p>
+                    </div>
+                    <div class="border-glow p-6 rounded-2xl bg-white/5 backdrop-blur-md idle-float reveal-item" style="transition-delay: 1.7s; animation-delay: 1.2s;">
+                        <div class="text-xs font-mono text-white/45 mb-2">03 · SOCRATIC OVERLOAD</div>
+                        <h3 class="text-xl font-bold text-white mb-2">Answer one at a time</h3>
+                        <p class="text-sm text-white/70 leading-relaxed">Don't let an endless flood of questions bury the core issue.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar & Slide Indicator Dots -->
+    <footer class="fixed bottom-4 left-0 right-0 z-20 px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 pointer-events-none">
+        <button id="prev-btn" onclick="prevSlide()" class="nav-btn px-6 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 pointer-events-auto cursor-pointer" aria-label="Previous slide">
+            <i class="fa-solid fa-arrow-left"></i> Prev
+        </button>
+
+        <!-- Slide Indicator Dots (Slides 1-20) -->
+        <div id="slide-dots" class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 max-w-full px-3 py-1.5 rounded-full bg-black/50 border border-white/15 backdrop-blur-md pointer-events-auto"></div>
+
+        <button id="next-btn" onclick="nextSlide()" class="nav-btn px-6 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 pointer-events-auto cursor-pointer" aria-label="Next slide">
+            Next <i class="fa-solid fa-arrow-right"></i>
+        </button>
+    </footer>
+
+    <script>
+        const TOTAL_SLIDES = 20;
+        let currentSlide = 1;
+        let animTimeouts = [];
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        /**
+         * Clears any active animation timers so re-triggering or switching slides stays clean.
+         */
+        function clearAnimTimeouts() {
+            animTimeouts.forEach(id => clearTimeout(id));
+            animTimeouts = [];
+        }
+
+        /**
+         * Generates subtle, slow ambient floating particles across the background.
+         */
+        function initParticles() {
+            const container = document.getElementById('particles-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const particleCount = 24;
+            for (let i = 0; i < particleCount; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = (Math.random() * 4 + 2).toFixed(1);
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${(Math.random() * 96 + 2).toFixed(1)}%`;
+                p.style.top = `${(Math.random() * 92 + 4).toFixed(1)}%`;
+                p.style.animationDuration = `${(Math.random() * 10 + 28).toFixed(1)}s`;
+                p.style.animationDelay = `${(Math.random() * -30).toFixed(1)}s`;
+                container.appendChild(p);
+            }
+        }
+
+        /**
+         * Builds the clickable slide indicator dots for slides 1 through 20.
+         */
+        function initSlideDots() {
+            const dotsContainer = document.getElementById('slide-dots');
+            if (!dotsContainer) return;
+            dotsContainer.innerHTML = '';
+
+            for (let i = 1; i <= TOTAL_SLIDES; i++) {
+                const dot = document.createElement('button');
+                dot.type = 'button';
+                dot.setAttribute('aria-label', `Go to slide ${i}`);
+                dot.dataset.dotSlide = i;
+                dot.className = 'w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-500 cursor-pointer bg-white/25 hover:bg-white/60';
+                dot.addEventListener('click', () => goToSlide(i));
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        /**
+         * Transitions smoothly between slides using directional 3D depth and blur-to-focus motion.
+         */
+        function goToSlide(slideNumber) {
+            if (slideNumber < 1 || slideNumber > TOTAL_SLIDES) return;
+            const previousSlide = currentSlide;
+            const isForward = slideNumber >= previousSlide;
+            currentSlide = slideNumber;
+            clearAnimTimeouts();
+
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => {
+                const num = Number(slide.getAttribute('data-slide'));
+                slide.classList.remove('exit-prev', 'exit-next', 'enter-from-right', 'enter-from-left');
+
+                if (num === previousSlide && previousSlide !== currentSlide) {
+                    slide.classList.remove('active');
+                    slide.classList.add(isForward ? 'exit-prev' : 'exit-next');
+                } else if (num === currentSlide) {
+                    if (previousSlide !== currentSlide) {
+                        slide.classList.add(isForward ? 'enter-from-right' : 'enter-from-left');
+                        // Force reflow so the directional starting transform is applied before activating
+                        void slide.offsetWidth;
+                    }
+                    slide.classList.remove('enter-from-right', 'enter-from-left');
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update counter badge
+            const counterEl = document.getElementById('slide-counter');
+            if (counterEl) {
+                counterEl.textContent = `${String(currentSlide).padStart(2, '0')} / ${TOTAL_SLIDES}`;
+            }
+
+            // Update top progress bar
+            const progressEl = document.getElementById('top-progress-bar');
+            if (progressEl) {
+                const pct = ((currentSlide / TOTAL_SLIDES) * 100).toFixed(1);
+                progressEl.style.width = `${pct}%`;
+            }
+
+            // Update dots state
+            const dots = document.querySelectorAll('#slide-dots button');
+            dots.forEach(dot => {
+                const dotNum = Number(dot.dataset.dotSlide);
+                if (dotNum === currentSlide) {
+                    dot.className = 'w-4 sm:w-5 h-2 sm:h-2.5 rounded-full transition-all duration-500 cursor-pointer bg-white shadow-[0_0_10px_rgba(255,255,255,0.9)]';
+                } else {
+                    dot.className = 'w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-500 cursor-pointer bg-white/25 hover:bg-white/60';
+                }
+            });
+
+            // Auto-trigger animations for interactive example slides
+            if (currentSlide === 8) {
+                playNonSequiturAnim();
+            } else if (currentSlide === 14) {
+                playFalseDilemmaAnim();
+            } else if (currentSlide === 18) {
+                playSocraticOverloadAnim();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < TOTAL_SLIDES) {
+                goToSlide(currentSlide + 1);
+            } else {
+                goToSlide(1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                goToSlide(currentSlide - 1);
+            } else {
+                goToSlide(TOTAL_SLIDES);
+            }
+        }
+
+        /**
+         * Animates the 5-turn Non Sequitur conversation slowly and smoothly with stick-figure reactions.
+         */
+        function playNonSequiturAnim() {
+            clearAnimTimeouts();
+            const bubbles = [
+                document.getElementById('ns-bubble-1'),
+                document.getElementById('ns-bubble-2'),
+                document.getElementById('ns-bubble-3'),
+                document.getElementById('ns-bubble-4'),
+                document.getElementById('ns-bubble-5')
+            ];
+            const headA = document.getElementById('ns-head-a');
+            const armsA = document.getElementById('ns-arms-a');
+            const headB = document.getElementById('ns-head-b');
+            const mouthB = document.getElementById('ns-mouth-b');
+
+            bubbles.forEach(el => {
+                if (!el) return;
+                el.classList.remove('opacity-100', 'translate-y-0');
+                el.classList.add('opacity-0', 'translate-y-4');
+            });
+
+            if (headA) headA.style.transform = 'rotate(0deg)';
+            if (armsA) armsA.style.transform = 'rotate(0deg)';
+            if (headB) headB.style.transform = 'rotate(0deg)';
+            if (mouthB) {
+                mouthB.style.borderRadius = '6px 6px 0 0';
+                mouthB.style.borderBottom = 'none';
+                mouthB.style.borderTop = '2px solid white';
+                mouthB.style.height = '6px';
+            }
+
+            const turnDelays = [500, 2900, 5400, 7900, 10400];
+            bubbles.forEach((el, idx) => {
+                animTimeouts.push(setTimeout(() => {
+                    if (el) {
+                        el.classList.remove('opacity-0', 'translate-y-4');
+                        el.classList.add('opacity-100', 'translate-y-0');
+                    }
+                    // Subtle stick-figure expressions per turn
+                    if (idx === 0 && armsA) armsA.style.transform = 'rotate(-14deg)';
+                    if (idx === 1 && headB) headB.style.transform = 'rotate(-6deg)';
+                    if (idx === 2 && headA) headA.style.transform = 'rotate(6deg)';
+                    if (idx === 3 && mouthB) {
+                        mouthB.style.border = '2px solid white';
+                        mouthB.style.borderRadius = '50%';
+                        mouthB.style.height = '10px';
+                    }
+                    if (idx === 4 && armsA) armsA.style.transform = 'rotate(-26deg)';
+                }, turnDelays[idx]));
+            });
+        }
+
+        /**
+         * Animates the 5-turn False Dilemma conversation slowly and smoothly with stick-figure reactions.
+         */
+        function playFalseDilemmaAnim() {
+            clearAnimTimeouts();
+            const bubbles = [
+                document.getElementById('fd-bubble-1'),
+                document.getElementById('fd-bubble-2'),
+                document.getElementById('fd-bubble-3'),
+                document.getElementById('fd-bubble-4'),
+                document.getElementById('fd-bubble-5')
+            ];
+            const armsA = document.getElementById('fd-arms-a');
+            const headB = document.getElementById('fd-head-b');
+            const mouthB = document.getElementById('fd-mouth-b');
+
+            bubbles.forEach(el => {
+                if (!el) return;
+                el.classList.remove('opacity-100', 'translate-y-0');
+                el.classList.add('opacity-0', 'translate-y-4');
+            });
+
+            if (armsA) armsA.style.transform = 'rotate(0deg)';
+            if (headB) headB.style.transform = 'rotate(0deg)';
+            if (mouthB) {
+                mouthB.style.width = '14px';
+                mouthB.style.height = '6px';
+                mouthB.style.border = 'none';
+                mouthB.style.borderBottom = '2px solid white';
+                mouthB.style.borderRadius = '0 0 6px 6px';
+            }
+
+            const turnDelays = [500, 2900, 5400, 7900, 10400];
+            bubbles.forEach((el, idx) => {
+                animTimeouts.push(setTimeout(() => {
+                    if (el) {
+                        el.classList.remove('opacity-0', 'translate-y-4');
+                        el.classList.add('opacity-100', 'translate-y-0');
+                    }
+                    if (idx === 0 && armsA) armsA.style.transform = 'rotate(-15deg)';
+                    if (idx === 1 && headB) headB.style.transform = 'rotate(6deg)';
+                    if (idx === 2 && armsA) armsA.style.transform = 'rotate(18deg)';
+                    if (idx === 3 && headB) headB.style.transform = 'rotate(-8deg)';
+                    if (idx === 4) {
+                        if (armsA) armsA.style.transform = 'rotate(-32deg)';
+                        if (mouthB) {
+                            mouthB.style.width = '16px';
+                            mouthB.style.height = '13px';
+                            mouthB.style.border = '2px solid white';
+                            mouthB.style.borderRadius = '50%';
+                        }
+                    }
+                }, turnDelays[idx]));
+            });
+        }
+
+        /**
+         * Animates the extended 14-question barrage at a readable, progressive pace with overwhelmed stick-figure reactions.
+         */
+        function playSocraticOverloadAnim() {
+            clearAnimTimeouts();
+            const qIds = [
+                'so-q1', 'so-q2', 'so-q3', 'so-q4', 'so-q5', 'so-q6', 'so-q7',
+                'so-q8', 'so-q9', 'so-q10', 'so-q11', 'so-q12', 'so-q13', 'so-q14'
+            ];
+            const eyes = document.getElementById('so-eyes');
+            const eyeL = document.getElementById('so-eye-l');
+            const eyeR = document.getElementById('so-eye-r');
+            const arms = document.getElementById('so-arms');
+            const head = document.getElementById('so-head');
+            const mouth = document.getElementById('so-mouth');
+
+            if (eyes) eyes.style.transform = 'translateX(0px)';
+            if (eyeL) eyeL.style.transform = 'scale(1)';
+            if (eyeR) eyeR.style.transform = 'scale(1)';
+            if (arms) arms.style.transform = 'rotate(0deg)';
+            if (head) head.style.transform = 'rotate(0deg)';
+            if (mouth) {
+                mouth.style.width = '14px';
+                mouth.style.height = '6px';
+                mouth.style.border = 'none';
+                mouth.style.borderBottom = '2px solid white';
+                mouth.style.borderRadius = '0 0 6px 6px';
+            }
+
+            qIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.classList.remove('opacity-100');
+                el.classList.add('opacity-0');
+            });
+
+            qIds.forEach((id, index) => {
+                const delay = 450 + index * 900;
+                animTimeouts.push(setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.classList.remove('opacity-0');
+                        el.classList.add('opacity-100');
+                    }
+
+                    const intensity = Math.min(1.5, 0.7 + index * 0.06);
+                    if (eyes) {
+                        eyes.style.transform = `translateX(${index % 2 === 0 ? '4px' : '-4px'})`;
+                    }
+                    if (index >= 5 && eyeL && eyeR) {
+                        eyeL.style.transform = `scale(${intensity.toFixed(2)})`;
+                        eyeR.style.transform = `scale(${(intensity * 0.85).toFixed(2)})`;
+                    }
+                    if (arms) {
+                        arms.style.transform = `rotate(${index % 2 === 0 ? '-28deg' : '28deg'})`;
+                    }
+                    if (head) {
+                        head.style.transform = `rotate(${index % 2 === 0 ? '-11deg' : '11deg'})`;
+                    }
+                    if (index === 8 && mouth) {
+                        mouth.style.width = '16px';
+                        mouth.style.height = '12px';
+                        mouth.style.border = '2px solid white';
+                        mouth.style.borderRadius = '50%';
+                    }
+                }, delay));
+            });
+        }
+
+        // Keyboard navigation (Left/Right arrows, Space, Home/End)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                goToSlide(1);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                goToSlide(TOTAL_SLIDES);
+            }
+        });
+
+        // Touch / Swipe navigation for mobile & tablet
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches && e.touches.length > 0) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+            if (!e.changedTouches || e.changedTouches.length === 0) return;
+            const deltaX = e.changedTouches[0].clientX - touchStartX;
+            const deltaY = e.changedTouches[0].clientY - touchStartY;
+
+            if (Math.abs(deltaX) > 55 && Math.abs(deltaX) > Math.abs(deltaY) * 1.3) {
+                if (deltaX < 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }, { passive: true });
+
+        // Initialize deck on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            initSlideDots();
+            goToSlide(1);
+        });
+    </script>
+</body>
+</html>
